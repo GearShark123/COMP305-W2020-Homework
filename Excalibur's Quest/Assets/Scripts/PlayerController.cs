@@ -7,7 +7,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce = 8.0f;
     [SerializeField] private float chargeTimer = 0.0f;
     [SerializeField] private float chargeTime = 0.1f;
-    [SerializeField] private float chargeTime2 = 0.2f;
+    [SerializeField] private float chargeTime2 = 0.2f; 
+    [SerializeField] private float torque = -5.0f;
 
     private Rigidbody2D rBody;    
 
@@ -35,12 +36,14 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log("1");
                 //Debug.Log(chargeTimer);
-                rBody.AddForce(new Vector2(jumpForce, jumpForce), ForceMode2D.Impulse);
+                //rBody.AddForce(new Vector2(jumpForce, jumpForce), ForceMode2D.Impulse);
+                rBody.AddForce(new Vector2(jumpForce / 2.0f, jumpForce), ForceMode2D.Impulse);
+                rBody.AddTorque(torque, ForceMode2D.Impulse);
             }
             else if (chargeTimer <= chargeTime2 || chargeTimer > chargeTime2)
             {
                 Debug.Log("2");
-                rBody.AddForce(new Vector2(jumpForce, jumpForce), ForceMode2D.Impulse);
+                rBody.AddForce(new Vector2(jumpForce / 2.0f, jumpForce), ForceMode2D.Impulse);
                 //rBody.AddForce(new Vector2(0.0f, jumpForce), ForceMode2D.Impulse);
             }
             chargeTimer = 0;
