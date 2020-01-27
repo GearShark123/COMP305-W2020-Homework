@@ -41,6 +41,7 @@ public class PlayerController : MonoBehaviour
             {
                 Debug.Log("2");
                 rBody.AddForce(new Vector2(jumpForce, jumpForce), ForceMode2D.Impulse);
+                //rBody.AddForce(new Vector2(0.0f, jumpForce), ForceMode2D.Impulse);
             }
             chargeTimer = 0;
         }
