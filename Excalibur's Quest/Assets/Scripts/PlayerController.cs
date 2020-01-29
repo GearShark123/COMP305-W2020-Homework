@@ -7,10 +7,12 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float jumpForce = 8.0f;
     [SerializeField] private float chargeTimer = 0.0f;
     [SerializeField] private float chargeTime = 0.1f;
-    [SerializeField] private float chargeTime2 = 0.2f; 
-    [SerializeField] private float torque = -5.0f;
+    [SerializeField] private float chargeTime2 = 0.2f;
+    [SerializeField] private float torque = -3.0f;
+    [SerializeField] private GameObject camera;
+    [SerializeField] private GameObject spawn;    
 
-    private Rigidbody2D rBody;    
+    private Rigidbody2D rBody;
 
     // Start is called before the first frame update
     void Start()
@@ -21,15 +23,24 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //chargeTimer += Time.deltaTime;
-        //Debug.Log(chargeTimer);
+        if (Input.GetKeyDown("r"))
+        {
+            //Debug.Log("r");
+            rBody.velocity = new Vector2(0f, 0f);
+            rBody.angularVelocity = 0f;
+            this.transform.position = spawn.transform.position;
+            this.transform.rotation = spawn.transform.rotation;
+            //camera.GetCinemachineComponent<CinemachineVirtualCamera>();
+        }
 
         //if (Input.GetAxis("Jump") > 0)
         if (Input.GetButtonDown("Jump"))
         {
             chargeTimer += Time.time;
-          
-        } else if (Input.GetButtonUp("Jump")) {
+
+        }
+        else if (Input.GetButtonUp("Jump"))
+        {
             chargeTimer = Time.time - chargeTimer;
 
             if (chargeTimer <= chargeTime)
@@ -52,6 +63,11 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        
+
+    }
+
+    void OnTriggerEnter2D(Collider2D col)
+    {
+        spawn = col.gameObject.transform.Find("Spawn").gameObject;
     }
 }
