@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class PlayerController : MonoBehaviour
 {
@@ -10,13 +11,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float chargeTime2 = 0.2f;
     [SerializeField] private float torque = -3.0f;
     [SerializeField] private GameObject camera;
-    [SerializeField] private GameObject spawn;    
+    [SerializeField] private GameObject startSpawn;
+    [SerializeField] private GameObject startCenter;
+    [SerializeField] private GameObject spawn;
+    [SerializeField] private GameObject center;
 
     private Rigidbody2D rBody;
 
     // Start is called before the first frame update
     void Start()
     {
+        camera = GameObject.Find("CM vcam1");
+        startSpawn = GameObject.Find("Checkpoint/Checkpoint_Spawn");
+        startCenter = GameObject.Find("Checkpoint/Checkpoint_Center");
         rBody = GetComponent<Rigidbody2D>();
     }
 
@@ -28,9 +35,15 @@ public class PlayerController : MonoBehaviour
             //Debug.Log("r");
             rBody.velocity = new Vector2(0f, 0f);
             rBody.angularVelocity = 0f;
-            this.transform.position = spawn.transform.position;
-            this.transform.rotation = spawn.transform.rotation;
-            //camera.GetCinemachineComponent<CinemachineVirtualCamera>();
+            this.transform.position = startSpawn.transform.position;
+            this.transform.rotation = startSpawn.transform.rotation;
+            //Debug.Log(this.transform.Find("Sword_Center").position);
+            //Debug.Log(startSpawn.transform.position);
+            //Debug.Log(startCenter.transform.position);            
+            //camera.GetComponent<ICinemachineCamera>().Follow = null;
+            //camera.GetComponent<ICinemachineCamera>().Follow = startCenter.transform;
+            camera.GetComponent<ICinemachineCamera>().Follow = this.transform.Find("Sword_Center");
+            //Debug.Log();
         }
 
         //if (Input.GetAxis("Jump") > 0)
@@ -68,6 +81,15 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
-        spawn = col.gameObject.transform.Find("Spawn").gameObject;
+        if (col.gameObject.tag == "Respawn")
+        {
+            spawn = col.gameObject.transform.Find("Checkpoint_Spawn").gameObject;
+            center = col.gameObject.transform.Find("Checkpoint_Center").gameObject;           
+        }
+
+        if (col.gameObject.tag == "Death")
+        {
+            
+        }
     }
 }
