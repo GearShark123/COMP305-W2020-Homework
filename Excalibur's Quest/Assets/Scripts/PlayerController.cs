@@ -10,7 +10,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float chargeTime = 0.1f;
     [SerializeField] private float chargeTime2 = 0.2f;
     [SerializeField] private float torque = -3.0f;
-    [SerializeField] private GameObject camera;
+    [SerializeField] private GameObject camera;    
     [SerializeField] private GameObject startSpawn;
     [SerializeField] private GameObject startCenter;
     [SerializeField] private GameObject spawn;
@@ -29,19 +29,15 @@ public class PlayerController : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {
+    {        
         if (Input.GetKeyDown("r"))
-        {
+        {            
             //Debug.Log("r");
             rBody.velocity = new Vector2(0f, 0f);
             rBody.angularVelocity = 0f;
             this.transform.position = startSpawn.transform.position;
             this.transform.rotation = startSpawn.transform.rotation;
-            //Debug.Log(this.transform.Find("Sword_Center").position);
-            //Debug.Log(startSpawn.transform.position);
-            //Debug.Log(startCenter.transform.position);            
             //camera.GetComponent<ICinemachineCamera>().Follow = null;
-            //camera.GetComponent<ICinemachineCamera>().Follow = startCenter.transform;
             camera.GetComponent<ICinemachineCamera>().Follow = this.transform.Find("Sword_Center");
             //Debug.Log();
         }
@@ -89,7 +85,12 @@ public class PlayerController : MonoBehaviour
 
         if (col.gameObject.tag == "Death")
         {
-            
+            rBody.velocity = new Vector2(0f, 0f);
+            rBody.angularVelocity = 0f;
+            this.transform.position = startSpawn.transform.position;
+            this.transform.rotation = startSpawn.transform.rotation;
+            //camera.GetComponent<ICinemachineCamera>().Follow = null;
+            camera.GetComponent<ICinemachineCamera>().Follow = this.transform.Find("Sword_Center");
         }
     }
 }
