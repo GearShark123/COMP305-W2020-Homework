@@ -10,12 +10,13 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float chargeTime = 0.1f;
     [SerializeField] private float chargeTime2 = 0.2f;
     [SerializeField] private float torque = -3.0f;
-    [SerializeField] private GameObject camera;    
+    [SerializeField] private GameObject camera;
     [SerializeField] private GameObject startSpawn;
     [SerializeField] private GameObject startCenter;
     [SerializeField] private GameObject spawn;
     [SerializeField] private GameObject center;
 
+    private bool isCloseToDeath = false;
     private Rigidbody2D rBody;
 
     // Start is called before the first frame update
@@ -29,16 +30,28 @@ public class PlayerController : MonoBehaviour
 
     // Update is called once per frame
     void Update()
-    {        
+    {
         if (Input.GetKeyDown("r"))
-        {            
+        {
+            //Debug.Log("r");
+            rBody.velocity = new Vector2(0f, 0f);
+            rBody.angularVelocity = 0f;
+            this.transform.position = spawn.transform.position;
+            this.transform.rotation = center.transform.rotation;
+            camera.GetComponent<CinemachineVirtualCamera>().enabled = false;
+            camera.GetComponent<CinemachineVirtualCamera>().enabled = true;
+            //Debug.Log();
+        }
+
+        if (Input.GetKeyDown("escape"))
+        {
             //Debug.Log("r");
             rBody.velocity = new Vector2(0f, 0f);
             rBody.angularVelocity = 0f;
             this.transform.position = startSpawn.transform.position;
             this.transform.rotation = startSpawn.transform.rotation;
-            //camera.GetComponent<ICinemachineCamera>().Follow = null;
-            camera.GetComponent<ICinemachineCamera>().Follow = this.transform.Find("Sword_Center");
+            camera.GetComponent<CinemachineVirtualCamera>().enabled = false;
+            camera.GetComponent<CinemachineVirtualCamera>().enabled = true;
             //Debug.Log();
         }
 
@@ -68,6 +81,16 @@ public class PlayerController : MonoBehaviour
             }
             chargeTimer = 0;
         }
+
+        if (isCloseToDeath == true && camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize > 5) 
+        {
+            camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize -= 0.01f;
+        }
+        
+        if (isCloseToDeath == false && camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize < 8)
+        {
+            camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize += 0.01f;
+        }
     }
 
     void FixedUpdate()
@@ -80,17 +103,30 @@ public class PlayerController : MonoBehaviour
         if (col.gameObject.tag == "Respawn")
         {
             spawn = col.gameObject.transform.Find("Checkpoint_Spawn").gameObject;
-            center = col.gameObject.transform.Find("Checkpoint_Center").gameObject;           
+            center = col.gameObject.transform.Find("Checkpoint_Center").gameObject;
         }
 
         if (col.gameObject.tag == "Death")
         {
             rBody.velocity = new Vector2(0f, 0f);
             rBody.angularVelocity = 0f;
-            this.transform.position = startSpawn.transform.position;
-            this.transform.rotation = startSpawn.transform.rotation;
-            //camera.GetComponent<ICinemachineCamera>().Follow = null;
-            camera.GetComponent<ICinemachineCamera>().Follow = this.transform.Find("Sword_Center");
+            this.transform.position = spawn.transform.position;
+            this.transform.rotation = center.transform.rotation;
+            camera.GetComponent<CinemachineVirtualCamera>().enabled = false;
+            camera.GetComponent<CinemachineVirtualCamera>().enabled = true;
+        }
+
+        if (col.gameObject.tag == "Enemy")
+        {
+            isCloseToDeath = true;
+        }
+    }
+
+    void OnTriggerExit2D(Collider2D col)
+    {
+        if (col.gameObject.tag == "Enemy")
+        {
+            isCloseToDeath = false;
         }
     }
 }
