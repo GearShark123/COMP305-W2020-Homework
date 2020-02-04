@@ -5,10 +5,7 @@ using Cinemachine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float jumpForce = 8.0f;
-    [SerializeField] private float chargeTimer = 0.0f;
-    [SerializeField] private float chargeTime = 0.1f;
-    [SerializeField] private float chargeTime2 = 0.2f;
+    [SerializeField] private float jumpForce = 8.0f;      
     [SerializeField] private float torque = -3.0f;
     [SerializeField] private GameObject camera;
     [SerializeField] private GameObject startSpawn;
@@ -17,6 +14,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject center;
 
     private bool isCloseToDeath = false;
+    private bool isShake = false;
+    private float jumpNum = 2.0f;
+    private float time = 0.0f;
     private Rigidbody2D rBody;
 
     // Start is called before the first frame update
@@ -25,7 +25,7 @@ public class PlayerController : MonoBehaviour
         camera = GameObject.Find("CM vcam1");
         startSpawn = GameObject.Find("Checkpoint/Checkpoint_Spawn");
         startCenter = GameObject.Find("Checkpoint/Checkpoint_Center");
-        rBody = GetComponent<Rigidbody2D>();
+        rBody = GetComponent<Rigidbody2D>();       
     }
 
     // Update is called once per frame
@@ -33,6 +33,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown("r"))
         {
+            jumpNum = 2;
             //Debug.Log("r");
             rBody.velocity = new Vector2(0f, 0f);
             rBody.angularVelocity = 0f;
@@ -45,7 +46,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown("escape"))
         {
-            //Debug.Log("r");
+            jumpNum = 2;
             rBody.velocity = new Vector2(0f, 0f);
             rBody.angularVelocity = 0f;
             this.transform.position = startSpawn.transform.position;
@@ -58,38 +59,46 @@ public class PlayerController : MonoBehaviour
         //if (Input.GetAxis("Jump") > 0)
         if (Input.GetButtonDown("Jump"))
         {
-            chargeTimer += Time.time;
-
-        }
-        else if (Input.GetButtonUp("Jump"))
-        {
-            chargeTimer = Time.time - chargeTimer;
-
-            if (chargeTimer <= chargeTime)
+            if (jumpNum == 2)
             {
-                Debug.Log("1");
-                //Debug.Log(chargeTimer);
-                //rBody.AddForce(new Vector2(jumpForce, jumpForce), ForceMode2D.Impulse);
                 rBody.AddForce(new Vector2(jumpForce / 2.0f, jumpForce), ForceMode2D.Impulse);
                 rBody.AddTorque(torque, ForceMode2D.Impulse);
+                jumpNum--;
             }
-            else if (chargeTimer <= chargeTime2 || chargeTimer > chargeTime2)
+            else if (jumpNum == 1)
             {
-                Debug.Log("2");
-                rBody.AddForce(new Vector2(jumpForce / 2.0f, jumpForce), ForceMode2D.Impulse);
-                //rBody.AddForce(new Vector2(0.0f, jumpForce), ForceMode2D.Impulse);
+                rBody.AddForce(new Vector2(0.0f, jumpForce), ForceMode2D.Impulse);
+                //rBody.AddTorque(torque, ForceMode2D.Impulse);
+                jumpNum--;
             }
-            chargeTimer = 0;
         }
 
-        if (isCloseToDeath == true && camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize > 5) 
+        if (isCloseToDeath == true && camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize > 5)
         {
             camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize -= 0.01f;
         }
-        
+
         if (isCloseToDeath == false && camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize < 8)
         {
             camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize += 0.01f;
+        }
+
+        if (isShake == true)
+        {
+            time += Time.deltaTime;
+            if (camera.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain == 0)
+            {
+                camera.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 0.2f;
+                camera.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_FrequencyGain = 3.0f;
+            }
+        }
+        if (time >= 0.5)
+        {
+            //Debug.Log("stop " + time);
+            camera.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 0.0f;
+            camera.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_FrequencyGain = 0.0f;
+            isShake = false;
+            time = 0;
         }
     }
 
@@ -102,12 +111,15 @@ public class PlayerController : MonoBehaviour
     {
         if (col.gameObject.tag == "Respawn")
         {
+            camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize = 8;
             spawn = col.gameObject.transform.Find("Checkpoint_Spawn").gameObject;
             center = col.gameObject.transform.Find("Checkpoint_Center").gameObject;
         }
 
         if (col.gameObject.tag == "Death")
         {
+            jumpNum = 2;
+            camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize = 8;
             rBody.velocity = new Vector2(0f, 0f);
             rBody.angularVelocity = 0f;
             this.transform.position = spawn.transform.position;
@@ -119,6 +131,15 @@ public class PlayerController : MonoBehaviour
         if (col.gameObject.tag == "Enemy")
         {
             isCloseToDeath = true;
+        }
+
+        if (col.gameObject.tag == "Ground")
+        {
+            if (jumpNum == 0)
+            {
+                isShake = true;
+            }
+            jumpNum = 2;
         }
     }
 
