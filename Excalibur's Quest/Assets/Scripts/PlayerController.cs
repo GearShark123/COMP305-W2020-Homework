@@ -12,6 +12,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject startCenter;
     [SerializeField] private GameObject spawn;
     [SerializeField] private GameObject center;
+    [SerializeField] private AudioClip impact;           //Drop Sword-SoundBible.com-768774345
+    [SerializeField] private AudioClip jump;             //Decapitation-SoundBible.com-800292304
+    [SerializeField] private AudioClip jump2;            //Swoosh 3-SoundBible.com-1573211927
+    [SerializeField] private AudioSource audioSource;
+
 
     private bool isCloseToDeath = false;
     private bool isShake = false;
@@ -22,6 +27,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
         camera = GameObject.Find("CM vcam1");
         startSpawn = GameObject.Find("Checkpoint/Checkpoint_Spawn");
         startCenter = GameObject.Find("Checkpoint/Checkpoint_Center");
@@ -61,12 +67,14 @@ public class PlayerController : MonoBehaviour
         {
             if (jumpNum == 2)
             {
+                audioSource.PlayOneShot(jump, 1.0F);
                 rBody.AddForce(new Vector2(jumpForce / 2.0f, jumpForce), ForceMode2D.Impulse);
                 rBody.AddTorque(torque, ForceMode2D.Impulse);
                 jumpNum--;
             }
             else if (jumpNum == 1)
             {
+                audioSource.PlayOneShot(jump2, 1.0F);
                 rBody.AddForce(new Vector2(0.0f, jumpForce), ForceMode2D.Impulse);
                 //rBody.AddTorque(torque, ForceMode2D.Impulse);
                 jumpNum--;
@@ -109,6 +117,8 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerEnter2D(Collider2D col)
     {
+        audioSource.PlayOneShot(impact, 1.0F);
+
         if (col.gameObject.tag == "Respawn")
         {
             camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize = 8;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UnworthyKnightController : MonoBehaviour
 {
-    [SerializeField] private float speed = -0.03f;
+    [SerializeField] private float speed = -0.02f;
     [SerializeField] private GameObject unworthyKnight;
     [SerializeField] private Transform point;
     [SerializeField] private Transform point2;
@@ -25,7 +25,7 @@ public class UnworthyKnightController : MonoBehaviour
         if (isLeft == true && unworthyKnight.transform.position.x <= point.position.x)
         {
             isLeft = false;
-            unworthyKnight.transform.localScale = new Vector3(1, 1, 1); 
+            unworthyKnight.transform.localScale = new Vector3(-1, 1, 1); 
         }
         else if (isLeft == true)
         {
@@ -35,7 +35,7 @@ public class UnworthyKnightController : MonoBehaviour
         if (isLeft == false && unworthyKnight.transform.position.x >= point2.position.x)
         {
             isLeft = true;
-            unworthyKnight.transform.localScale = new Vector3(-1, 1, 1);
+            unworthyKnight.transform.localScale = new Vector3(1, 1, 1);
         }
         else if (isLeft == false)
         {
