@@ -12,6 +12,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject startCenter;
     [SerializeField] private GameObject spawn;
     [SerializeField] private GameObject center;
+    [SerializeField] private AudioClip sign;             //Sigh-SoundBible.com-1679973774
+    [SerializeField] private AudioClip cry;              //Crying-SoundBible.com-1419166957
     [SerializeField] private AudioClip falling;          //Scream And Die Fx-SoundBible.com-299479967
     [SerializeField] private AudioClip captured;         //Hl2_Rebel-Ragdoll485-573931361
     [SerializeField] private AudioClip impact;           //Drop Sword-SoundBible.com-768774345
@@ -24,6 +26,8 @@ public class PlayerController : MonoBehaviour
     private bool isShake = false;
     private float jumpNum = 2.0f;
     private float time = 0.0f;
+    private int deaths = 0;
+    private int randomNum;
     private Rigidbody2D rBody;
 
     // Start is called before the first frame update
@@ -102,6 +106,20 @@ public class PlayerController : MonoBehaviour
             isShake = false;
             time = 0;
         }
+
+        if (deaths == 3)
+        {
+            randomNum = (int)Random.Range(0.0f, 2.0f);
+            if (randomNum == 1)
+            {
+                audioSource.PlayOneShot(sign, 1.0F);
+            }
+            else if (randomNum == 0)
+            {
+                audioSource.PlayOneShot(cry, 1.0F);
+            }
+            deaths = 0;
+        }
     }
 
     void FixedUpdate()
@@ -110,7 +128,8 @@ public class PlayerController : MonoBehaviour
     }
 
     public void CheckPointRespawn()
-    {        
+    {
+        deaths++;
         jumpNum = 2;
         rBody.velocity = new Vector2(0f, 0f);
         rBody.angularVelocity = 0f;
