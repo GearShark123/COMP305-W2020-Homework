@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UnworthyKnightController : MonoBehaviour
-{
+{    
     [SerializeField] private float speed = -0.02f;
     [SerializeField] private GameObject unworthyKnight;
     [SerializeField] private Transform point;
@@ -25,7 +25,7 @@ public class UnworthyKnightController : MonoBehaviour
         if (isLeft == true && unworthyKnight.transform.position.x <= point.position.x)
         {
             isLeft = false;
-            unworthyKnight.transform.localScale = new Vector3(-1, 1, 1); 
+            unworthyKnight.transform.localScale = new Vector3(-1, 1, 1);
         }
         else if (isLeft == true)
         {

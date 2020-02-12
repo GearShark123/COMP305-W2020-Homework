@@ -4,7 +4,7 @@ using UnityEngine;
 using Cinemachine;
 
 public class PlayerController : MonoBehaviour
-{
+{    
     [SerializeField] private float jumpForce = 8.0f;      
     [SerializeField] private float torque = -3.0f;
     [SerializeField] private GameObject camera;
@@ -138,7 +138,7 @@ public class PlayerController : MonoBehaviour
             camera.GetComponent<CinemachineVirtualCamera>().enabled = true;
         }
 
-        if (col.gameObject.tag == "Enemy")
+        if (col.gameObject.tag == "Zoom")
         {
             isCloseToDeath = true;
         }
@@ -155,7 +155,7 @@ public class PlayerController : MonoBehaviour
 
     void OnTriggerExit2D(Collider2D col)
     {
-        if (col.gameObject.tag == "Enemy")
+        if (col.gameObject.tag == "Zoom")
         {
             isCloseToDeath = false;
         }
