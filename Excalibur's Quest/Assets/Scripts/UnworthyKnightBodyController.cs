@@ -9,13 +9,13 @@ public class UnworthyKnightBodyController : MonoBehaviour
     [SerializeField] private GameObject excaliburCapturePrefab;
     [SerializeField] private GameObject excaliburCaptureClone;
     [SerializeField] private GameObject player;
-    [SerializeField] private GameObject camera;
+    [SerializeField] private GameObject cam;
 
     // Start is called before the first frame update
     void Start()
     {
         unworthyKnightPatrolArea = this.transform.parent.gameObject.transform.parent.gameObject;
-        camera = GameObject.Find("CM vcam1");
+        cam = GameObject.Find("CM vcam1");
     }
 
     // Update is called once per frame
@@ -27,7 +27,7 @@ public class UnworthyKnightBodyController : MonoBehaviour
     void HidePlayer()
     {
         player.SetActive(true);
-        camera.GetComponent<CinemachineVirtualCamera>().Follow = player.transform;
+        cam.GetComponent<CinemachineVirtualCamera>().Follow = player.transform;
         player.GetComponent<PlayerController>().CheckPointRespawn();
         unworthyKnightPatrolArea.GetComponent<UnworthyKnightController>().StartMoving();
     }
@@ -42,7 +42,7 @@ public class UnworthyKnightBodyController : MonoBehaviour
                 this.gameObject.transform.parent.gameObject.GetComponent<UnworthyKnightHeartbeatController>().MuteSound();
                 unworthyKnightPatrolArea.GetComponent<UnworthyKnightController>().StopMoving();
                 player.SetActive(false);
-                camera.GetComponent<CinemachineVirtualCamera>().Follow = null;
+                cam.GetComponent<CinemachineVirtualCamera>().Follow = null;
                 excaliburCaptureClone = Instantiate(excaliburCapturePrefab, player.transform.position, player.transform.rotation);
                 excaliburCaptureClone.transform.GetChild(0).gameObject.GetComponent<PlayerController>().Captured();
                 Destroy(excaliburCaptureClone, 3.0f);

@@ -113,6 +113,7 @@
      <Compile Include="Assets\Imports\Flat Platformer Template\Scripts\Paralax.cs" />
      <Compile Include="Assets\Imports\Flat Platformer Template\Scripts\Player.cs" />
      <Compile Include="Assets\Imports\Flat Platformer Template\Scripts\WindMill.cs" />
+     <Compile Include="Assets\Scripts\FallingController.cs" />
      <Compile Include="Assets\Scripts\PlayerController.cs" />
      <Compile Include="Assets\Scripts\UnworthyKnightBodyController.cs" />
      <Compile Include="Assets\Scripts\UnworthyKnightController.cs" />

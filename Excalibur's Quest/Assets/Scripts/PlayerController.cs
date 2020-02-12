@@ -7,11 +7,12 @@ public class PlayerController : MonoBehaviour
 {    
     [SerializeField] private float jumpForce = 8.0f;      
     [SerializeField] private float torque = -3.0f;
-    [SerializeField] private GameObject camera;
+    [SerializeField] private GameObject cam;
     [SerializeField] private GameObject startSpawn;
     [SerializeField] private GameObject startCenter;
     [SerializeField] private GameObject spawn;
     [SerializeField] private GameObject center;
+    [SerializeField] private AudioClip falling;          //Scream And Die Fx-SoundBible.com-299479967
     [SerializeField] private AudioClip captured;         //Hl2_Rebel-Ragdoll485-573931361
     [SerializeField] private AudioClip impact;           //Drop Sword-SoundBible.com-768774345
     [SerializeField] private AudioClip jump;             //Decapitation-SoundBible.com-800292304
@@ -29,7 +30,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         //audioSource = this.gameObject.GetComponent<AudioSource>();
-        camera = GameObject.Find("CM vcam1");
+        cam = GameObject.Find("CM vcam1");
         startSpawn = GameObject.Find("Checkpoint/Checkpoint_Spawn");
         startCenter = GameObject.Find("Checkpoint/Checkpoint_Center");
         rBody = GetComponent<Rigidbody2D>();       
@@ -50,8 +51,8 @@ public class PlayerController : MonoBehaviour
             rBody.angularVelocity = 0f;
             this.transform.position = startSpawn.transform.position;
             this.transform.rotation = startSpawn.transform.rotation;
-            camera.GetComponent<CinemachineVirtualCamera>().enabled = false;
-            camera.GetComponent<CinemachineVirtualCamera>().enabled = true;
+            cam.GetComponent<CinemachineVirtualCamera>().enabled = false;
+            cam.GetComponent<CinemachineVirtualCamera>().enabled = true;
             //Debug.Log();
         }
 
@@ -74,30 +75,30 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (isCloseToDeath == true && camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize > 5)
+        if (isCloseToDeath == true && cam.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize > 5)
         {
-            camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize -= 0.01f;
+            cam.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize -= 0.01f;
         }
 
-        if (isCloseToDeath == false && camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize < 8)
+        if (isCloseToDeath == false && cam.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize < 8)
         {
-            camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize += 0.01f;
+            cam.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize += 0.01f;
         }
 
         if (isShake == true)
         {
             time += Time.deltaTime;
-            if (camera.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain == 0)
+            if (cam.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain == 0)
             {
-                camera.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 0.2f;
-                camera.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_FrequencyGain = 3.0f;
+                cam.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 0.2f;
+                cam.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_FrequencyGain = 3.0f;
             }
         }
         if (time >= 0.5)
         {
             //Debug.Log("stop " + time);
-            camera.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 0.0f;
-            camera.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_FrequencyGain = 0.0f;
+            cam.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_AmplitudeGain = 0.0f;
+            cam.GetComponent<CinemachineVirtualCamera>().GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>().m_FrequencyGain = 0.0f;
             isShake = false;
             time = 0;
         }
@@ -109,13 +110,14 @@ public class PlayerController : MonoBehaviour
     }
 
     public void CheckPointRespawn()
-    {
+    {        
         jumpNum = 2;
         rBody.velocity = new Vector2(0f, 0f);
         rBody.angularVelocity = 0f;
         this.transform.position = spawn.transform.position;
         this.transform.rotation = center.transform.rotation;
-        camera.GetComponent<CinemachineVirtualCamera>().enabled = true;
+        cam.GetComponent<CinemachineVirtualCamera>().enabled = false;
+        cam.GetComponent<CinemachineVirtualCamera>().enabled = true;
     }
 
     public void Captured()
@@ -123,19 +125,18 @@ public class PlayerController : MonoBehaviour
         audioSource.PlayOneShot(captured, 1.0F);
     }
 
+    public void Falling()
+    {
+        audioSource.PlayOneShot(falling, 1.0F);
+    }
+
     void OnTriggerEnter2D(Collider2D col)
     {       
         if (col.gameObject.tag == "Respawn")
         {
-            camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize = 8;
+            cam.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize = 8;
             spawn = col.gameObject.transform.Find("Checkpoint_Spawn").gameObject;
             center = col.gameObject.transform.Find("Checkpoint_Center").gameObject;
-        }
-
-        if (col.gameObject.tag == "Death")
-        {
-            camera.GetComponent<CinemachineVirtualCamera>().enabled = false;
-            CheckPointRespawn();
         }
 
         if (col.gameObject.tag == "Zoom")
