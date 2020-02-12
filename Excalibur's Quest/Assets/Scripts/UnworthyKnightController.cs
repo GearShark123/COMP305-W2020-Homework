@@ -8,6 +8,8 @@ public class UnworthyKnightController : MonoBehaviour
     [SerializeField] private GameObject unworthyKnight;
     [SerializeField] private Transform point;
     [SerializeField] private Transform point2;
+    [SerializeField] private AudioClip footsteps;             //Walking On Gravel-SoundBible.com-2023303198
+    [SerializeField] private AudioSource audioSource;         //Unworthy_Knight_Patrol_Area
 
     private Transform targetPosition;
     private bool isLeft = true;
@@ -19,6 +21,9 @@ public class UnworthyKnightController : MonoBehaviour
         unworthyKnight = this.transform.GetChild(0).gameObject;
         point = this.transform.GetChild(1).gameObject.transform;
         point2 = this.transform.GetChild(2).gameObject.transform;
+        //audioSource.PlayOneShot(footsteps, 1.0F);  
+        audioSource.clip = footsteps;
+        audioSource.Play();
     }
 
     void Update()
@@ -49,13 +54,25 @@ public class UnworthyKnightController : MonoBehaviour
 
     public void StopMoving()
     {
+        MuteSound();
         isStop = true;
         this.GetComponent<Animator>().enabled = false;
     }
 
     public void StartMoving()
     {
+        UnmuteSound();
         isStop = false;
         this.GetComponent<Animator>().enabled = true;
+    }
+
+    public void MuteSound()
+    {
+        this.gameObject.GetComponent<AudioSource>().mute = true;
+    }
+
+    public void UnmuteSound()
+    {
+        this.gameObject.GetComponent<AudioSource>().mute = false;
     }
 }

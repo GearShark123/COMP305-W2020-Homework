@@ -116,6 +116,7 @@
      <Compile Include="Assets\Scripts\PlayerController.cs" />
      <Compile Include="Assets\Scripts\UnworthyKnightBodyController.cs" />
      <Compile Include="Assets\Scripts\UnworthyKnightController.cs" />
+     <Compile Include="Assets\Scripts\UnworthyKnightHeartbeatController.cs" />
      <None Include="Assets\Imports\Cinemachine\ReleaseNotes.txt" />
  <Reference Include="Unity.Timeline.Editor">
  <HintPath>C:/Users/Lyle/Desktop/COMP305-W2020-Homework/Excalibur&apos;s Quest/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>

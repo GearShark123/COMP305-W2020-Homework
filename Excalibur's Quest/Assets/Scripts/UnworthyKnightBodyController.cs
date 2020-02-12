@@ -39,6 +39,7 @@ public class UnworthyKnightBodyController : MonoBehaviour
             player = col.gameObject;
             if (col is CapsuleCollider2D)
             {
+                this.gameObject.transform.parent.gameObject.GetComponent<UnworthyKnightHeartbeatController>().MuteSound();
                 unworthyKnightPatrolArea.GetComponent<UnworthyKnightController>().StopMoving();
                 player.SetActive(false);
                 camera.GetComponent<CinemachineVirtualCamera>().Follow = null;
