@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class UnworthyKnightController : MonoBehaviour
-{    
+{
     [SerializeField] private float speed = -0.02f;
     [SerializeField] private GameObject unworthyKnight;
     [SerializeField] private Transform point;
@@ -11,6 +11,7 @@ public class UnworthyKnightController : MonoBehaviour
 
     private Transform targetPosition;
     private bool isLeft = true;
+    private bool isStop = false;
 
 
     void Start()
@@ -22,24 +23,39 @@ public class UnworthyKnightController : MonoBehaviour
 
     void Update()
     {
-        if (isLeft == true && unworthyKnight.transform.position.x <= point.position.x)
+        if (isStop == false)
         {
-            isLeft = false;
-            unworthyKnight.transform.localScale = new Vector3(-1, 1, 1);
-        }
-        else if (isLeft == true)
-        {
-            unworthyKnight.transform.Translate(speed, 0, 0);
-        }
+            if (isLeft == true && unworthyKnight.transform.position.x <= point.position.x)
+            {
+                isLeft = false;
+                unworthyKnight.transform.localScale = new Vector3(-1, 1, 1);
+            }
+            else if (isLeft == true)
+            {
+                unworthyKnight.transform.Translate(speed, 0, 0);
+            }
 
-        if (isLeft == false && unworthyKnight.transform.position.x >= point2.position.x)
-        {
-            isLeft = true;
-            unworthyKnight.transform.localScale = new Vector3(1, 1, 1);
+            if (isLeft == false && unworthyKnight.transform.position.x >= point2.position.x)
+            {
+                isLeft = true;
+                unworthyKnight.transform.localScale = new Vector3(1, 1, 1);
+            }
+            else if (isLeft == false)
+            {
+                unworthyKnight.transform.Translate(-speed, 0, 0);
+            }
         }
-        else if (isLeft == false)
-        {
-            unworthyKnight.transform.Translate(-speed, 0, 0);
-        }
+    }
+
+    public void StopMoving()
+    {
+        isStop = true;
+        this.GetComponent<Animator>().enabled = false;
+    }
+
+    public void StartMoving()
+    {
+        isStop = false;
+        this.GetComponent<Animator>().enabled = true;
     }
 }

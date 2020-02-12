@@ -12,10 +12,11 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject startCenter;
     [SerializeField] private GameObject spawn;
     [SerializeField] private GameObject center;
+    [SerializeField] private AudioClip captured;         //Hl2_Rebel-Ragdoll485-573931361
     [SerializeField] private AudioClip impact;           //Drop Sword-SoundBible.com-768774345
     [SerializeField] private AudioClip jump;             //Decapitation-SoundBible.com-800292304
     [SerializeField] private AudioClip jump2;            //Swoosh 3-SoundBible.com-1573211927
-    [SerializeField] private AudioSource audioSource;
+    [SerializeField] private AudioSource audioSource;    //Excalibur
 
 
     private bool isCloseToDeath = false;
@@ -27,7 +28,7 @@ public class PlayerController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        audioSource = GetComponent<AudioSource>();
+        //audioSource = this.gameObject.GetComponent<AudioSource>();
         camera = GameObject.Find("CM vcam1");
         startSpawn = GameObject.Find("Checkpoint/Checkpoint_Spawn");
         startCenter = GameObject.Find("Checkpoint/Checkpoint_Center");
@@ -39,15 +40,7 @@ public class PlayerController : MonoBehaviour
     {
         if (Input.GetKeyDown("r"))
         {
-            jumpNum = 2;
-            //Debug.Log("r");
-            rBody.velocity = new Vector2(0f, 0f);
-            rBody.angularVelocity = 0f;
-            this.transform.position = spawn.transform.position;
-            this.transform.rotation = center.transform.rotation;
-            camera.GetComponent<CinemachineVirtualCamera>().enabled = false;
-            camera.GetComponent<CinemachineVirtualCamera>().enabled = true;
-            //Debug.Log();
+            CheckPointRespawn();
         }
 
         if (Input.GetKeyDown("escape"))
@@ -112,13 +105,26 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        
+    }
 
+    public void CheckPointRespawn()
+    {
+        jumpNum = 2;
+        rBody.velocity = new Vector2(0f, 0f);
+        rBody.angularVelocity = 0f;
+        this.transform.position = spawn.transform.position;
+        this.transform.rotation = center.transform.rotation;
+        camera.GetComponent<CinemachineVirtualCamera>().enabled = true;
+    }
+
+    public void Captured()
+    {
+        audioSource.PlayOneShot(captured, 1.0F);
     }
 
     void OnTriggerEnter2D(Collider2D col)
-    {
-        audioSource.PlayOneShot(impact, 1.0F);
-
+    {       
         if (col.gameObject.tag == "Respawn")
         {
             camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize = 8;
@@ -128,14 +134,8 @@ public class PlayerController : MonoBehaviour
 
         if (col.gameObject.tag == "Death")
         {
-            jumpNum = 2;
-            camera.GetComponent<CinemachineVirtualCamera>().m_Lens.OrthographicSize = 8;
-            rBody.velocity = new Vector2(0f, 0f);
-            rBody.angularVelocity = 0f;
-            this.transform.position = spawn.transform.position;
-            this.transform.rotation = center.transform.rotation;
             camera.GetComponent<CinemachineVirtualCamera>().enabled = false;
-            camera.GetComponent<CinemachineVirtualCamera>().enabled = true;
+            CheckPointRespawn();
         }
 
         if (col.gameObject.tag == "Zoom")
@@ -145,6 +145,7 @@ public class PlayerController : MonoBehaviour
 
         if (col.gameObject.tag == "Ground")
         {
+            audioSource.PlayOneShot(impact, 1.0F);
             if (jumpNum == 0)
             {
                 isShake = true;
