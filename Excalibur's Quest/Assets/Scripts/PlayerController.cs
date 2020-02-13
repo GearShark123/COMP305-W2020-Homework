@@ -1,15 +1,15 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Cinemachine;
+
 
 public class PlayerController : MonoBehaviour
 {    
     [SerializeField] private float jumpForce = 8.0f;      
     [SerializeField] private float torque = -3.0f;
     [SerializeField] private GameObject cam;
-    [SerializeField] private GameObject startSpawn;
-    [SerializeField] private GameObject startCenter;
     [SerializeField] private GameObject spawn;
     [SerializeField] private GameObject center;
     [SerializeField] private AudioClip sign;             //Sigh-SoundBible.com-1679973774
@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioSource audioSource;    //Excalibur
 
 
+
     private bool isCloseToDeath = false;
     private bool isShake = false;
     private float jumpNum = 2.0f;
@@ -32,11 +33,11 @@ public class PlayerController : MonoBehaviour
 
     // Start is called before the first frame update
     void Start()
-    {
+    {        
         //audioSource = this.gameObject.GetComponent<AudioSource>();
         cam = GameObject.Find("CM vcam1");
-        startSpawn = GameObject.Find("Checkpoint/Checkpoint_Spawn");
-        startCenter = GameObject.Find("Checkpoint/Checkpoint_Center");
+        //startSpawn = GameObject.Find("Checkpoint/Checkpoint_Spawn");
+        //startCenter = GameObject.Find("Checkpoint/Checkpoint_Center");
         rBody = GetComponent<Rigidbody2D>();       
     }
 
@@ -50,18 +51,12 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown("escape"))
         {
-            jumpNum = 2;
-            rBody.velocity = new Vector2(0f, 0f);
-            rBody.angularVelocity = 0f;
-            this.transform.position = startSpawn.transform.position;
-            this.transform.rotation = startSpawn.transform.rotation;
-            cam.GetComponent<CinemachineVirtualCamera>().enabled = false;
-            cam.GetComponent<CinemachineVirtualCamera>().enabled = true;
+             SceneManager.LoadScene(SceneManager.GetActiveScene().name);            
             //Debug.Log();
         }
 
         //if (Input.GetAxis("Jump") > 0)
-        if (Input.GetButtonDown("Jump"))
+        if (this.gameObject.transform.parent == null && Input.GetButtonDown("Jump"))
         {
             if (jumpNum == 2)
             {
